@@ -1,5 +1,7 @@
 import tensorflow as tf
 import cv2
+from config import *
+
 #image = misc.imread('/Users/Alex/Google Drive/Workshops/europython/flask_ml/tutorial/webapp/static_files/export.png')
 
 
@@ -68,7 +70,8 @@ probs = tf.nn.softmax(logits)
 saver = tf.train.Saver()
 
 def evaluate():
-    image = cv2.imread('/Users/Alex/Google Drive/Workshops/europython/flask_ml/tutorial/webapp/static_files/export.png')
+    #image = cv2.imread('/Users/Alex/Google Drive/Workshops/europython/flask_ml/tutorial/webapp/static_files/export.png')
+    image = cv2.imread(UPLOAD_FOLDER+'/export.png')
     image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     image = image / 255
     image = image.reshape([1, 28, 28, 1])
@@ -77,8 +80,8 @@ def evaluate():
     print(image.shape)
 
     with tf.Session() as sess:
-        #saver = tf.train.import_meta_graph("/Users/Alex/Google Drive/Workshops/europython/flask_ml/tutorial/webapp/model.ckpt.meta")
-        saver.restore(sess, "/Users/Alex/Google Drive/Workshops/europython/flask_ml/tutorial/webapp/model.ckpt")
+        #saver.restore(sess, "/Users/Alex/Google Drive/Workshops/europython/flask_ml/tutorial/webapp/model.ckpt")
+        saver.restore(sess, BASEPATH+"/model.ckpt")
 
         probs_value = sess.run(probs, feed_dict={
             x: image,

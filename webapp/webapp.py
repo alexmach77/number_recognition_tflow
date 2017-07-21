@@ -1,9 +1,8 @@
 import os
 from flask import Flask, request, redirect, url_for
 from werkzeug.utils import secure_filename
+from config import *
 
-UPLOAD_FOLDER = '/Users/Alex/Google Drive/Workshops/europython/flask_ml/tutorial/webapp/static_files'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

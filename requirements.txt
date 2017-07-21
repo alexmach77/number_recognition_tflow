@@ -1,0 +1,8 @@
+numpy
+pandas
+firefly-python
+
+Flask
+Flask-WTF
+tensorflow
+cv2
