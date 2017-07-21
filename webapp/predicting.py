@@ -2,7 +2,6 @@ import tensorflow as tf
 import cv2
 from config import *
 
-#image = misc.imread('/Users/Alex/Google Drive/Workshops/europython/flask_ml/tutorial/webapp/static_files/export.png')
 tf.reset_default_graph()
 saver = tf.train.import_meta_graph('./models/model_98_43.ckpt.meta')
 inputs = tf.get_default_graph().get_tensor_by_name('inputs:0')
@@ -29,5 +28,5 @@ def evaluate():
 
         print(probs_value)
         prediction = probs_value[0].argmax()
-
+        
         return prediction

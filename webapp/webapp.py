@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from config import *
-
+from flask import render_template
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -28,17 +28,12 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect('/uploaded')
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    '''
+    return  render_template("index.html")
 
 @app.route('/uploaded')
 def hello_world():
     import predicting
-    return 'You uploaded the number: '+str(predicting.evaluate())
+    return  render_template("uploaded.html",predicted_value = str(predicting.evaluate()))
+
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)
