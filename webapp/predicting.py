@@ -1,10 +1,10 @@
 import tensorflow as tf
 import cv2
+from config import *
 
-tf.reset_default_graph() 
-
+#image = misc.imread('/Users/Alex/Google Drive/Workshops/europython/flask_ml/tutorial/webapp/static_files/export.png')
+tf.reset_default_graph()
 saver = tf.train.import_meta_graph('./models/model_98_43.ckpt.meta')
-
 inputs = tf.get_default_graph().get_tensor_by_name('inputs:0')
 keep_prob = tf.get_default_graph().get_tensor_by_name('keep_prob:0')
 #print('The input placeholder is expecting an array of shape {} and type {}'.format(inputs.shape, inputs.dtype))
@@ -23,7 +23,6 @@ def evaluate():
 
     with tf.Session() as sess:
         saver.restore(sess, "./models/model_98_43.ckpt")
-
         probs_value = sess.run(probs, feed_dict={
             inputs: image,
             keep_prob: 1.})
