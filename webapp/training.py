@@ -4,10 +4,11 @@ from config import *
 
 mnist = input_data.read_data_sets(".", one_hot=True, reshape=False)
 
-# Parameters
-learning_rate = 0.00001
-epochs = 10
-batch_size = 128
+# Hyperparameters
+learning_rate = 1e-4
+epochs = 1
+batch_size = 50
+dropout = 0.5  # Dropout, probability to KEEP units
 
 # Number of samples to calculate validation and accuracy
 # Decrease this if you're running out of memory to calculate accuracy
@@ -15,21 +16,20 @@ test_valid_size = 256
 
 # Network parameters
 n_classes = 10  # MNIST total classes (0-9 digits)
-dropout = 0.75  # Dropout, probability to KEEP units
 
 # Store layers weight & biases in dictionaries
 weights = {
-    'wc1': tf.Variable(tf.random_normal([5, 5, 1, 32]), name='Wc1'),
-    'wc2': tf.Variable(tf.random_normal([5, 5, 32, 64]), name='Wc2'),
-    'wd1': tf.Variable(tf.random_normal([7 * 7 * 64, 1024]), name='Wfc'),
-    'out': tf.Variable(tf.random_normal([1024, n_classes]), name='Wo')
+    'wc1': tf.Variable(tf.truncated_normal([5, 5, 1, 32], stddev=0.1), name='Wc1'),
+    'wc2': tf.Variable(tf.truncated_normal([5, 5, 32, 64], stddev=0.1), name='Wc2'),
+    'wd1': tf.Variable(tf.truncated_normal([7 * 7 * 64, 1024], stddev=0.1), name='Wfc'),
+    'out': tf.Variable(tf.truncated_normal([1024, n_classes], stddev=0.1), name='Wo')
 }
 
 biases = {
-    'bc1': tf.Variable(tf.random_normal([32]), name='bc1'),
-    'bc2': tf.Variable(tf.random_normal([64]), name='bc2'),
-    'bd1': tf.Variable(tf.random_normal([1024]), name='bfc'),
-    'out': tf.Variable(tf.random_normal([n_classes]), name='bo')
+    'bc1': tf.Variable(tf.constant(0.1, shape=[32]), name='bc1'),
+    'bc2': tf.Variable(tf.constant(0.1, shape=[64]), name='bc2'),
+    'bd1': tf.Variable(tf.constant(0.1, shape=[1024]), name='bfc'),
+    'out': tf.Variable(tf.constant(0.1, shape=[n_classes]), name='bo')
 }
 
 
@@ -67,26 +67,29 @@ def conv_net(x, weights, biases, dropout):
         # Output Layer - class prediction - 1024 to 10
         out = tf.add(tf.matmul(fc1, weights['out']), biases['out'])
 
-
     return out
 
 
 # tf Graph input
-x = tf.placeholder(tf.float32, [None, 28, 28, 1])
-y = tf.placeholder(tf.float32, [None, n_classes])
-keep_prob = tf.placeholder(tf.float32)  # keep probability (dropout)
+x = tf.placeholder(tf.float32, [None, 28, 28, 1], name='inputs')
+y = tf.placeholder(tf.float32, [None, n_classes], name='targets')
+keep_prob = tf.placeholder(tf.float32, name='keep_prob')  # keep probability (dropout)
 
 # Model
 logits = conv_net(x, weights, biases, keep_prob)
+logits = tf.identity(logits, name='logits')
 # pred = tf.nn.softmax(logits)
 
 # Define loss and optimizer
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=y))
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
+with tf.name_scope('train'):
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=y))
+    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+    # AdamOptimizer shows a great performance on this problem
 
 # Accuracy
-correct_pred = tf.equal(tf.argmax(logits, 1), tf.argmax(y, 1))
-accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+with tf.name_scope('accuracy'):
+    correct_pred = tf.equal(tf.argmax(logits, 1), tf.argmax(y, 1))
+    accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
 # Initiliazing the variables
 init = tf.global_variables_initializer()
@@ -131,5 +134,5 @@ with tf.Session() as sess:
     print('Testing Accuracy: {}'.format(test_acc))
 
     # Save the variables to disk.
-    save_path = saver.save(sess, "/tmp/model.ckpt")
+    save_path = saver.save(sess, "./models/model_98_43.ckpt")
     print("Model saved in file: %s" % save_path)
