@@ -28,6 +28,6 @@ def evaluate():
             keep_prob: 1.})
 
         print(probs_value)
-        prediction = tf.argmax(probs)
+        prediction = probs_value[0].argmax()
 
         return prediction
