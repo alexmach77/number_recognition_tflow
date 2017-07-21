@@ -42,3 +42,6 @@ def upload_file():
 def hello_world():
     import predicting
     return 'You uploaded the number: '+str(predicting.evaluate())
+
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)
