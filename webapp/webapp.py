@@ -12,7 +12,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/', methods=['GET', 'POST'])
-def upload_file():
+def index():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -27,13 +27,14 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect('/uploaded')
+            #return redirect('/uploaded')
+            return redirect(url_for('uploaded', filename=filename))
     return  render_template("index.html")
 
 @app.route('/uploaded')
-def hello_world():
+def uploaded():
     import predicting
-    return  render_template("uploaded.html",predicted_value = str(predicting.evaluate()))
+    return  render_template("uploaded.html",predicted_value = str(predicting.evaluate(filename=request.args.get('filename'))))
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

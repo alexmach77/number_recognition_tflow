@@ -12,8 +12,8 @@ logits = tf.get_default_graph().get_tensor_by_name('logits:0')
 probs = tf.nn.softmax(logits)
 
 
-def evaluate():
-    image = cv2.imread('./static_files/export.png')
+def evaluate(filename):
+    image = cv2.imread('./static_files/'+filename)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     image = image / 255 # normalize pixel values to [0,1]
     image = 1 - image # invert colors -> black background
