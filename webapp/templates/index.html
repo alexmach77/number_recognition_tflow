@@ -1,14 +1,8 @@
-<!doctype html>
-<head>
-<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}" />
-</head>
-
-<body>
-
-<title>Upload new File</title>
-<h1>Upload new File</h1>
-<form method=post enctype=multipart/form-data>
-  <p><input type=file name=file>
-     <input type=submit value=Upload>
-</form>
-</body>
+{% extends "layout.html" %}
+{% block content %}
+    <title>Upload New File</title>
+    <h1>Upload New File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file><input type=submit value=Upload>
+    </form>
+{% endblock %}

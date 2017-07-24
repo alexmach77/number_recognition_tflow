@@ -1,6 +1,9 @@
-<!doctype html>
-<title>New file succesfully uploaded</title>
-<h2>New file succesfully uploaded!</h2>
-<p>
-You uploaded the number: <h4>{{predicted_value}} </h4>
-</p>
+{% extends "layout.html" %}
+{% block content %}
+    <title>New file succesfully uploaded</title>
+    <h2>New file succesfully uploaded!</h2>
+
+    You uploaded the number:
+
+    <h4>{{predicted_value}} </h4>
+{% endblock %}
